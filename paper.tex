@@ -1,14 +1,14 @@
 % \documentclass[10pt]{sosp2015}
 % \documentclass[10pt,onecolumn]{sosp2015}
 \documentclass[10pt,onecolumn,letterpaper]{article}
-%\usepackage[10pt,inchmargins]{sigmin}  %% template from Xi Wang.
+% \usepackage[10pt,inchmargins]{sigmin}  %% template from Xi Wang.
 %\special{papersize=8.5in,11in}
 %\setlength{\pdfpagewidth}{8.5in}
 %\setlength{\pdfpageheight}{11in}
-% \usepackage[noheadfoot,
-%             left=1in,right=1in,top=1in,bottom=1in,
-%             columnsep=0.3in
-%             ]{geometry}
+\usepackage[noheadfoot,
+	      left=1in,right=1in,top=1in,bottom=1in,
+             columnsep=0.3in
+             ]{geometry}
 \usepackage[small,compact]{titlesec}
 \usepackage[font={small,bf}]{caption}    % added 9/10/13
 \usepackage[nolineno,noindent,norules]{lgrind}
@@ -260,8 +260,7 @@ pdfdisplaydoctitle=true,
 % \doi{2815400.2815427}
 
 \title{\mytitle}
-% \authorinfo{Heming Cui, Rui Gu, Cheng Liu, Tianyu Chen, Junfeng Yang}{The 
-% University of Hong Kong, Columbia University}
+% \authorinfo{Authors}
 
 % \author[+*]{Heming Cui}
 % \author[*]{Rui Gu}
@@ -334,19 +333,19 @@ pdfdisplaydoctitle=true,
 \setlength{\footskip}{20pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{sloppypar}
-
-\vskip 2mm
-\noindent {\small \bf Categories and Subject Descriptors:}
-{\small D.4.5~[{\bf Operating Systems}]: {Threads, Reliability};
-  C.2.4~[{\bf Computer-communication Networks}]: {Distributed Systems};}
-\vskip .1mm
-\noindent {\small \bf General Terms:} {\small Algorithms, Design,
-  Reliability, Performance}
-\vskip .1mm
-\noindent {\small \bf Keywords:} {\small \mykeywords}
-
-\end{sloppypar}
+% \begin{sloppypar}
+% 
+% \vskip 2mm
+% \noindent {\small \bf Categories and Subject Descriptors:}
+% {\small D.4.5~[{\bf Operating Systems}]: {Threads, Reliability};
+%   C.2.4~[{\bf Computer-communication Networks}]: {Distributed Systems};}
+% \vskip .1mm
+% \noindent {\small \bf General Terms:} {\small Algorithms, Design,
+%   Reliability, Performance}
+% \vskip .1mm
+% \noindent {\small \bf Keywords:} {\small \mykeywords}
+% 
+% \end{sloppypar}
 
 \begin{sloppypar}
 
@@ -368,7 +367,7 @@ pdfdisplaydoctitle=true,
 %\setlength\bibsep{2.25pt}
 {
 %\small
- \bibliographystyle{abbrvnat}
+ \bibliographystyle{abbrv}
  \bibliography{bib/biblio}
 }
 
