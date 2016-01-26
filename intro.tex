@@ -1,9 +1,5 @@
 \section{Introduction} \label{sec:intro}
 
-% P1: Defintion of State machine replication (SMR) and its value on 
-% fault-tolerance. Emphasis that SMR is especially useful to server
-% applications that provide on-line service.
-
 \emph{State machine replication (\smr)} models a program as a deterministic 
 state machine, where the states are important program data and the transitions 
 are deterministic executions of program code under input requests.  \smr runs 
@@ -16,11 +12,6 @@ replica failures or network partitions.  \smr is proven safe in
 theory and provides high availability in 
 practice~\cite{paxos:live,paxos:practical,chubby:osdi,paxos:datastore, 
 bolosky:nsdi11,mencius:osdi08,eve:osdi12,rex:eurosys14}.
-
-
-% P2: Two problems makes it difficult to deploy general server programs
-% in SMR. The first problem. is nondeterminism (thread interleavings,
-% network requests arrivals).
 
 The fault-tolerant benefit of \smr makes it particularly attractive on 
 implementing a principled replication system for general programs, especially 
@@ -61,10 +52,6 @@ code, but also disrupts the \smr system itself at times. For instance,
 developers abused Chubby for storage~\cite{chubby:osdi}, causing the
 Chubby developers to add quota support.
 
-% P5: Our goal, transparently replicate server programs. New replication
-% abstraction: black-blox replication (BBRep). Key technique: DMT. Key 
-% guarantee: TBD.
-
 We present \xxx,\footnote{\xxx stands for Correctly ReplicAting
   Nondeterministic Executions. It is also our hope that our system is as
   elegant as the identically named bird.} an \smr system that
@@ -79,16 +66,6 @@ client's connection or \recv a client's data) an input request, and
 runs a \paxos consensus protocol~\cite{paxos:practical} to ensure that a
 quorum of the replicas sees the same exact sequence of the incoming socket calls.
 
-% It schedules all thread synchronizations (\eg, \mutexlock)
-% deterministically to ensure that, even with multithreading, the same input
-% stream leads to the same execution state. It leverages transparent 
-% process and file system checkpoint tools to recover or add replicas.
-
-%% Our design of \xxx avoids intrusive modifications to a server program, and is 
-%% efficient because \xxx intercepts only a server program's socket calls and 
-%% thread synchronizations, allowing the other code to run in parallel. Due to 
-%% this design's elegance, we name our system after crane, one of the most elegant 
-%% birds.
 
 To address nondeterminism, we have built three \emph{deterministic 
 multithreading (\dmt)} systems~\cite{cui:tern:osdi10, peregrine:sosp11, 
@@ -111,16 +88,6 @@ simply combining \paxos and \dmt is not sufficient to keep replicas in
 sync, because the physical time that each request arrives at different
 replicas may still be different, easily leading to divergence of execution
 states and outputs.
-
-%% For instance, consider multiple server threads blocking at \recv to 
-%% wait for \send socket calls issued from clients. Even if \paxos ensures the 
-%% same order of these \send calls among replicas, network delays and OS 
-%% scheduling in different replicas can still easily cause various return 
-%% orders of these \recv calls and thus inconsistent outputs (confirmed in 
-%% our evaluation; see \S\ref{sec:correctness}). To keep replicas in sync, we must handle 
-%% each client's socket call with the server's matching blocking call at the 
-%% same logical time because request timing variations can lead to different 
-%% schedules.
 
 Two prior approaches attempted to tackle this challenge.  
 Execute-agree-follow~\cite{rex:eurosys14} records a partially
@@ -174,15 +141,6 @@ rarely need to invoke time consensus, enjoying good performance.  For idle
 servers, time consensus overhead does not matter much because the servers
 are idle anyway.
 
-% Heming: todo: move this to the time bubble section.
-% In a conceptual level, \xxx enforces the same logical times for network
-% requests across different replicas with three rules. First, \paxos
-% ensures the same totally ordered sequence of network requests and
-% inserted time bubbles as a ``\paxos operation queue" for each replica node.
-% Second, \dmt guarantees that it only ticks logical clocks (\ie,
-% schedules synchronizations) only when this queue is not empty. Third, the 
-% \timealgo technique ensures that this queue is not empty (if empty, it 
-% inserts time bubbles).
 
 
 % P10: Evaluation highlights.
@@ -198,9 +156,6 @@ leverages \criu~\cite{criu} to checkpoint and restore process states, and
 the \lxc container is that \xxx isolates the replicated server program
 from the environment, avoiding nondeterministic systems resource contentions.
 
-% (\eg,
-% a random external process grabs the network port the replicated program
-% needs).
 
 We evaluated \xxx on \nprog widely used server programs,
 including \http servers \apache and \mongoose, an anti-virus server

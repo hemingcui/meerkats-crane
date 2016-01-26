@@ -32,10 +32,6 @@ process requests concurrently at peak performance on our machines. These
 popular benchmarks and workloads cover CPU, network, and file-IO 
 bounded operations.  
 
-% , and they involve diverse blocking socket calls 
-% (\eg, \poll, \select, \epollwait, \accept, and \recv) and intensive \pthread 
-% synchronizations.
-
 \xxx has two parameters for the \timealgo technique. The first 
 parameter, $W_{timeout}$, is the physical duration that the primary's \dmt 
 scheduler waits before it requests consensus on a time bubble insertion. To 
@@ -78,12 +74,6 @@ to \xxx's performance?
 \item[\S\ref{sec:recovery}:] How fast are \xxx's checkpoint and recovery 
 components on handling replica failures?
 
-% \item[\S\ref{sec:race}:] If some \xxx users care about data races much, how 
-% does \xxx tolerate the slowdown of data race detector by deploying it on a 
-% replica?
-
-% \item[\S\ref{sec:lesson}:] What practical lessons have we learnt during the 
-% case study on these server programs with \xxx?
 
 \end{tightenum}
 
@@ -158,23 +148,6 @@ nondeterministic execution.}}
 \label{fig:normalize-perf}
 \end{figure}
 
-% \begin{table}[b]
-% \footnotesize
-% \centering
-% \vspace{-.05in}
-% \begin{tabular}{lrrr}
-% {\bf Program} & {\bf Percentage (\%)} \\
-% \hline\\[-2.3ex]
-% \apache                       & 1.14        \\
-% \mongoose                       & 3.03        \\
-% \clamav                                   & 20.96     \\
-% \mediatomb                       & 23.76        \\
-% \end{tabular}
-% \vspace{-.05in}
-% \caption{{\em Percentage of inserted time bubbles among all consensus 
-% requests.}} 
-% \label{tab:bubble-percentage}
-% \end{table}
 
 To understand the performance impact of \xxx's components, we divided \xxx's 
 components into two major parts: the \dmt part ran by \parrot; and the proxy 
@@ -273,22 +246,6 @@ effects of these hints are shown in Figure~\ref{fig:opt-hint}. These hints
 reduces \apache's overhead from a 424\% to 22.99\%, and \mongoose's from a 643\% 
 to 5.09\%.
 
-% In our evaluation, we added two lines of hints for each of the \apache and 
-% \mongoose programs. The methodology of adding hints to these server programs 
-% are similar: one line \v{soft\_barrier\_init(0,} \v{maxworkers,} 
-% \v{100*maxworkers)} was added in the server's \v{main()} function to initialize 
-% a soft barrier with an opaque id 0, and the estimated number of max worker 
-% threads, and also the number of logical clock ``100" that each thread need to 
-% wait on this soft barrier to line up with other threads. In our evaluation, the 
-% \v{maxworkers} is the 8, the number of threads with peak performance of these 
-% servers running on our machines. The second line \v{soft\_barrier\_wait(0);} 
-% was 
-% added before a worker thread starts to process a \http request, so that threads 
-% can line up at this point with the other threads with the same opaque id and 
-% process requests in parallel. These hints are just ``soft" barriers; 
-% they timeout deterministically and can tolerate different number of concurrent 
-% incoming requests; they just make a (deterministic) effort to line up 
-% computations that tend to run in parallel.
 
 
 
@@ -392,9 +349,5 @@ in \downgradetime and downgraded itself to a backup. Overall, both the \paxos
 leader election and the restarted old primary's self-downgrading took 
 sub-seconds.
 
-% We observed that the restored \mongoose server were able to continue to process 
-% client requests normally, thanking to \criu and \lxc's robust implementation. 
-% Overall, both the leader election and the restarted node's self-downgrading 
-% took sub-seconds.
 
 

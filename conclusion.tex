@@ -1,5 +1,5 @@
 \section{Conclusion} \label{sec:conclusion}
-We have presented \xxx, a \smr system that 
+We have built \xxx, a \smr system that 
 transparently replicates general server programs without 
 requiring server developers' intervention. It provides a new state machine 
 interface compatible to socket API, and it leverages 
@@ -13,19 +13,3 @@ Evaluation on \nprog widely used server programs shows that
 support. \xxx has the potential to expand the adoption of \smr and to provide 
 transparent fault-tolerance support for general server programs. \xxx's 
 source code is at \github.
-
-
-
-% P11: Contributions, conceptual and engineering.
-% Our key conceptual contribution is the idea of transparent \smr for
-% general programs, which has the potential to expand \smr's
-% adoption and improve availability of many systems.  This idea also applies to 
-% other replication concepts (\eg, byzantine fault 
-% tolerance~\cite{pbft:osdi99,zyzzyva:sosp07}). This idea has other broad 
-% applications as well (\S\ref{sec:app}). Our engineering contributions 
-% include the \xxx system and its evaluation on widely used server
-% programs. 
-% 
-% All \xxx's source code (including a standalone, libevent-based
-% \paxos implementation), benchmarks, and evaluation results are available
-% at \github.
