@@ -1,0 +1,261 @@
+\section{Introduction} \label{sec:intro}
+
+% P1: Defintion of State machine replication (SMR) and its value on 
+% fault-tolerance. Emphasis that SMR is especially useful to server
+% applications that provide on-line service.
+
+\emph{State machine replication (\smr)} models a program as a deterministic 
+state machine, where the states are important program data and the transitions 
+are deterministic executions of program code under input requests.  \smr runs 
+replicas of the program and invokes a distributed consensus protocol (typically 
+\paxos~\cite{paxos,paxos:simple,paxos:complex}) to ensure the same sequence of 
+input requests for replicas, as long as a quorum (typically a majority) of the 
+replicas agrees on the input request sequence. Under the deterministic execution 
+assumption, this quorum of replicas must reach the same exact state despite 
+replica failures or network partitions.  \smr is proven safe in 
+theory and provides high availability in 
+practice~\cite{paxos:live,paxos:practical,chubby:osdi,paxos:datastore, 
+bolosky:nsdi11,mencius:osdi08,eve:osdi12,rex:eurosys14}.
+
+
+% P2: Two problems makes it difficult to deploy general server programs
+% in SMR. The first problem. is nondeterminism (thread interleavings,
+% network requests arrivals).
+
+The fault-tolerant benefit of \smr makes it particularly attractive on 
+implementing a principled replication system for general programs, especially 
+server programs that require high availability.  Unfortunately, doing so remains
+quite challenging; the core difficulty lies in the deterministic state
+machine abstraction required by \smr, elaborated below.
+
+First, the deterministic execution assumption breaks down in today's
+server programs because they are almost universally multithreaded. Even on the 
+same exact sequence of input requests, different executions of the same exact 
+multithreaded program may run into different thread interleavings, or 
+\emph{schedules}, depending on such factors as OS scheduling and physical 
+arrival times of requests. Thus, they can easily exercise different schedules 
+and reach divergent execution states -- a difficult problem well recognized by 
+the community~\cite{dos:osdi10,eve:osdi12,ddos:asplos13,rex:eurosys14}.
+To tackle this problem, one prior approach,
+execute-verify~\cite{eve:osdi12}, detects divergence of execution states
+and retries, but it relies on developers to manually annotate states, a
+strenuous and error-prone process.
+
+Second, to leverage existing \smr systems such as
+ZooKeeper~\cite{zookeeper}, developers often have to shoehorn their
+programs into the narrowly defined state machine interfaces provided by
+these \smr systems.  Ideally, experts -- those with intimate knowledge of
+the arcane (think how many 
+papers~\cite{paxos,paxos:simple,paxos:complex,paxos:live,paxos:practical} are 
+needed to explain \paxos),
+under-specified~\cite{paxos:practical} \smr protocols and subtle failure
+scenarios in distributed systems -- should build a solid \smr system,
+which all other developers then leverage. However, an \smr system often
+has to settle for a specific state and transitional interface because it
+cannot anticipate all possibilities in which developers structure their
+programs.  For example, Chubby~\cite{chubby:osdi} defines a lock server
+interface, and ZooKeeper a pseudo file system interface.  Orchestrating a
+sever program into such a narrow interface not only requires
+intrusive and error-prone modifications to the program's structure and
+code, but also disrupts the \smr system itself at times. For instance,
+developers abused Chubby for storage~\cite{chubby:osdi}, causing the
+Chubby developers to add quota support.
+
+% P5: Our goal, transparently replicate server programs. New replication
+% abstraction: black-blox replication (BBRep). Key technique: DMT. Key 
+% guarantee: TBD.
+
+This paper presents \xxx,\footnote{\xxx stands for Correctly ReplicAting
+  Nondeterministic Executions. It is also our hope that our system is as
+  elegant as the identically named bird.} an \smr system that
+transparently replicates server programs for high availability.  With
+\xxx, a developer focuses on implementing her program's intended
+functionality, not replication.  When she is ready to replicate her
+program for availability, she simply runs \xxx with her program on
+multiple replicas.  Within each replica, \xxx interposes on the socket and
+the thread synchronization interfaces to keep replicas in sync.
+Specifically, it considers each incoming socket call (\eg, \accept a
+client's connection or \recv a client's data) an input request, and
+runs a \paxos consensus protocol~\cite{paxos:practical} to ensure that a
+quorum of the replicas sees the same exact sequence of the incoming socket calls.
+
+% It schedules all thread synchronizations (\eg, \mutexlock)
+% deterministically to ensure that, even with multithreading, the same input
+% stream leads to the same execution state. It leverages transparent 
+% process and file system checkpoint tools to recover or add replicas.
+
+%% Our design of \xxx avoids intrusive modifications to a server program, and is 
+%% efficient because \xxx intercepts only a server program's socket calls and 
+%% thread synchronizations, allowing the other code to run in parallel. Due to 
+%% this design's elegance, we name our system after crane, one of the most elegant 
+%% birds.
+
+\xxx schedules synchronizations using \emph{deterministic multithreading 
+(\dmt)}~\cite{dpj:oopsla09,dmp:asplos09,kendo:asplos09,coredet:asplos10, 
+dos:osdi10,ddos:asplos13,ics:oopsla13}.  This technique typically maintains a 
+\emph{logical time}\footnote{Though related, the logical time in \dmt is not to 
+be confused with the logical time in distributed systems~\cite{lamportclock}.} 
+that advances deterministically on each thread's synchronization. By 
+serializing thread synchronizations, \dmt practically makes an entire 
+multithreaded execution deterministic. The overhead of \dmt is typically 
+moderate because most code is not synchronization and can still run in parallel. 
+Specifically, \xxx leverages our prior \dmt system
+\parrot~\cite{parrot:sosp13}, which incurs on average 12.7\% overhead
+on a wide range of 108 popular multithreaded programs on 24-core machines.
+
+A key challenge on realizing \smr for multithreaded executions is that,
+simply combining \paxos and \dmt is not sufficient to keep replicas in
+sync, because the physical time that each request arrives at different
+replicas may still be different, easily leading to divergence of execution
+states and outputs.  (We illustrate this problem using an example in
+\S\ref{sec:example} and experimental results in \S\ref{sec:correctness}.)
+
+%% For instance, consider multiple server threads blocking at \recv to 
+%% wait for \send socket calls issued from clients. Even if \paxos ensures the 
+%% same order of these \send calls among replicas, network delays and OS 
+%% scheduling in different replicas can still easily cause various return 
+%% orders of these \recv calls and thus inconsistent outputs (confirmed in 
+%% our evaluation; see \S\ref{sec:correctness}). To keep replicas in sync, we must handle 
+%% each client's socket call with the server's matching blocking call at the 
+%% same logical time because request timing variations can lead to different 
+%% schedules.
+
+Two prior approaches attempted to tackle this challenge.  
+Execute-agree-follow~\cite{rex:eurosys14} records a partially
+ordered schedule of \pthread synchronizations on one replica and replays it 
+on the other replicas, which may incur high network bandwidth 
+consumption and performance overhead. dOS~\cite{dos:osdi10} also leverages
+\dmt for replication, but it determines the logical admission time for
+each request using two-phase commit.  Aside from two-phase commit's known
+intolerance of primary failures, per-request commit is also costly.
+
+One may consider solving this challenge by leveraging the underlying
+distributed consensus protocol to determine the logical admission time for each
+request.  Specifically, when running the consensus protocol to decide each
+request's position in the request sequence, a predicted logical admission time 
+can be carried as part of the decision as well. Unfortunately, 
+predicting a logical admission time for each request accurately is quite 
+challenging because typical server programs have background threads which 
+may frequently tick logical clocks. A too-small predication leads to 
+replica divergence if another replica has already run past the predicted 
+logical time. A too-large predication blocks the system unnecessarily 
+because replicas cannot admit the request before reaching the predicted time.
+
+Our key insight is that many requests need no admission time consensus
+because their admission times are already deterministic.  Hypothetically,
+if the requests arrive faster than they are admitted at each replica, each
+request's admission time is fully deterministic because each replica
+simply admits requests as fast as it can. In practice, requests do not arrive 
+this fast.  However, there are still frequent bursts of requests that arrive 
+together. Among replicas, as long as the first request of a burst is admitted at 
+a deterministic logical time, all the other requests in the burst are admitted 
+at deterministic logical times without requiring consensus.
+
+Leveraging this insight, we created an technique called \emph{\timealgo} to 
+enforce deterministic logical times efficiently.  It ensures that the 
+first request in a burst is admitted at each replica deterministically by 
+inserting a deterministic wait after the previous burst of requests are all 
+admitted.  During this wait, each replica only processes already admitted 
+requests, and does not admit new requests.  \xxx negotiates a consistent 
+duration of the wait via the underlying distributed consensus protocol, and 
+enforces this wait at each replica via \dmt.  These waits are like 
+deterministic time bubbles between bursts of requests (hence the name of the 
+technique), creating the illusion that the requests arrive faster than they are 
+admitted.
+
+In short, by converting per-request admission time consensus to per-burst,
+\timealgo efficiently combines the input determinism of \paxos and the
+execution determinism of \dmt.  For busy servers, requests in bursts
+greatly outnumber the other requests.  (We observed that \timebubblelow to
+\timebubblehigh of requests are in bursts; see \S\ref{sec:overhead}.) They
+rarely need to invoke time consensus, enjoying good performance.  For idle
+servers, time consensus overhead does not matter much because the servers
+are idle anyway.
+
+% Heming: todo: move this to the time bubble section.
+% In a conceptual level, \xxx enforces the same logical times for network
+% requests across different replicas with three rules. First, \paxos
+% ensures the same totally ordered sequence of network requests and
+% inserted time bubbles as a ``\paxos operation queue" for each replica node.
+% Second, \dmt guarantees that it only ticks logical clocks (\ie,
+% schedules synchronizations) only when this queue is not empty. Third, the 
+% \timealgo technique ensures that this queue is not empty (if empty, it 
+% inserts time bubbles).
+
+
+% P10: Evaluation highlights.
+We implemented \xxx by interposing on the POSIX socket and the \pthread
+synchronization interfaces.  It intercepts operations along these
+interfaces by hijacking dynamically linked library calls for transparency.
+It implements the \paxos protocol atop libevent~\cite{libevent} for
+distributed consensus, and leverages our \parrot system for deterministic
+multithreading.  Unlike prior \smr systems with narrow interfaces, \xxx's
+checkpoint and recovery must work with general programs. To this end, it
+leverages \criu~\cite{criu} to checkpoint and restore process states, and
+\lxc~\cite{lxc} for file system states.  An additional benefit of using
+the \lxc container is that \xxx isolates the replicated server program
+from the environment, avoiding nondeterministic systems resource contentions 
+(\S\ref{sec:checkpoint}).
+
+% (\eg,
+% a random external process grabs the network port the replicated program
+% needs).
+
+We evaluated \xxx on \nprog widely used server programs,
+including \http servers \apache and \mongoose, an anti-virus server
+\clamav, a \upnp multimedia server \mediatomb, and a database server \mysql. 
+Our results on popular performance benchmarks show that \xxx works with
+all the servers easily (three servers require no modification, and the
+other two servers each require only two lines of \parrot hints~\cite{parrot:sosp13}
+to improve performance); that \xxx's performance overhead is
+moderate (an average of \overhead overhead at the servers' peak 
+performance setups on our 24-core machines); and that \xxx is robust on replica 
+failures.
+
+% P11: Contributions, conceptual and engineering.
+Our key conceptual contribution is the idea of transparent \smr for
+general programs, which has the potential to expand \smr's
+adoption and improve availability of many systems.  This idea also applies to 
+other replication concepts (\eg, byzantine fault 
+tolerance~\cite{pbft:osdi99,zyzzyva:sosp07}). This idea has other broad 
+applications as well (\S\ref{sec:app}). Our engineering contributions 
+include the \xxx system and its evaluation on widely used server
+programs. All \xxx's source code (including a standalone, libevent-based
+\paxos implementation), benchmarks, and evaluation results are available
+at \github.
+
+In the remainder of this paper, \S\ref{sec:overview} introduces \xxx's 
+architecture and an example. \S\ref{sec:wrappers} describes how \xxx enforces 
+order for synchronizations in a server. \S\ref{sec:time-bubble} illustrates the 
+work flow of the \timealgo technique. \S\ref{sec:impl} describes implementation 
+details. \S\ref{sec:discussion} discusses the limitations and 
+applications of \xxx. \S\ref{sec:eval} presents evaluation results. 
+\S\ref{sec:related} discusses related work, and \S\ref{sec:conclusion} 
+concludes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
