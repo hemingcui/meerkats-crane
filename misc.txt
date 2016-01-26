@@ -1,0 +1,39 @@
+Papers:
+[Crane] http://www.cs.columbia.edu/~junfeng/papers/crane-sosp15.pdf
+[RepFrame] http://www.cs.columbia.edu/~junfeng/papers/repframe-apsys15.pdf
+[Parrot] http://www.cs.columbia.edu/~junfeng/papers/parrot-sosp13.pdf
+[StableMT] http://www.cs.columbia.edu/~junfeng/papers/smt-cacm.pdf
+[Woodpecker] http://www.cs.columbia.edu/~junfeng/papers/woodpecker-asplos13.pdf
+[PLDI] http://www.cs.columbia.edu/~junfeng/papers/wu-pldi12.pdf
+[Peregrine] http://www.cs.columbia.edu/~junfeng/papers/peregrine-sosp11.pdf
+[Tern] http://www.cs.columbia.edu/~junfeng/papers/cui-tern-osdi10.pdf
+[Loom] http://www.cs.columbia.edu/~junfeng/papers/wu-loom-osdi10.pdf
+
+Source code:
+[Crane] https://github.com/columbia/crane
+[Parrot] https://github.com/columbia/smt-mc
+[Loom] https://github.com/columbia/loom
+
+Impact:
+Patent 1:
+Methods, Systems, and Media for Protecting Applications from Races
+Publication number: 20150254112
+Abstract: Methods, systems, and media for protecting applications from races are provided. In some embodiments, methods for protecting applications from races are provided, the methods comprising: adding to at least one cycle of the application an update check to determine when an update to the application is to be made; adding an update engine to the application, wherein the update engine is configured to: receive an update plan that is based on an execution filter that specifies how operations of the application are to be synchronized; and cause synchronization operations to be added to the application based on the update plan that prevent the race from occurring.
+Type: Application
+Filed: April 8, 2015
+Publication date: September 10, 2015
+Inventors: Junfeng Yang, Jingyue Wu, Heming Cui
+
+Paternt 2:
+Methods, Systems, and Media for Providing Determinism in Multithreaded Programs
+Publication number: 20120102470
+Abstract: Methods, systems, and media for providing determinism in multithreaded programs are provided. In some embodiments, methods for providing determinism in multithreaded programs are provided, the methods comprising: instrumenting a program with: a proxy that: receives inputs to the program; and determines whether a schedule corresponding to a set of input constraints satisfied by the inputs has been memoized; and a replayer that: if it is determined that a schedule corresponding to a set of input constraints satisfied by the inputs has been memoized, processes the inputs by the program according to the schedule.
+Type: Application
+Filed: July 25, 2011
+Publication date: April 26, 2012
+Inventors: Junfeng Yang, Heming Cui, Jingyue Wu
+
+Media article: "Major Breakthrough Improves Software Reliability and Security"
+http://cacm.acm.org/news/140067-major-breakthrough-improves-software-reliability-and-security/fulltext
+
+

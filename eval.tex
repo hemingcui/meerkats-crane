@@ -190,7 +190,7 @@ overhead of \xxx for the \nprog evaluated programs is \overhead
 due to two main reasons. First, except for \mysql, which does fine-grained, 
 per-table mutex and read-write locks frequently, the \dmt schedules were 
 efficient on the other four servers. The reason is that \parrot's scheduling 
-primitives are already highly optimized for multi-core (\S\ref{sec:parrot}). 
+primitives are already highly optimized for multi-core~\cite{parrot:sosp13}. 
 The proxy-only part incurred 0.82\%$\sim$3.46\% overhead, which is not 
 surprising, because the number of socket calls is much smaller than 
 the number of \pthread synchronizations in these programs. In short, \xxx's 
@@ -358,7 +358,7 @@ process", ``C fs" means ``Checkpoint file system", and ``R fs" means
 \end{table}
 
 To handle replica failures, \xxx periodically invokes a checkpoint operation on 
-one backup (\S\ref{sec:checkpoint}). Each \xxx checkpoint operation 
+one backup. Each \xxx checkpoint operation 
 contains four time consuming parts: (1) using \criu to dump the state of a 
 server process (and its child processes, if any); (2) stopping and restarting a 
 \lxc container; (3) doing an incremental checkpoint on a server's current 
@@ -383,7 +383,7 @@ other replicas formed a quorum).
 To evaluate the speed of \xxx's \paxos protocol on replica failure and 
 recovery, we manually restarted the primary replica running a \mongoose server. 
 The other two backups in the system then invoked a leader election with three 
-steps (\S\ref{sec:paxos}), which took \recovertime. After 
+steps~\cite{paxos:practical}, which took \recovertime. After 
 the old primary's machine restarted, \xxx restarted the proxy and the 
 consensus component, extracted the latest \mongoose checkpoint on the local 
 machine and restored the \mongoose process and its file system. On the full 
