@@ -14,22 +14,7 @@ support. \xxx has the potential to expand the adoption of \smr and to provide
 transparent fault-tolerance support for general server programs. \xxx's 
 source code is at \github.
 
-\section{Recommendation} \label{sec:recommendation}
-We envision three applications for \xxx. First, \xxx can 
-be leveraged by other replication concepts (\eg, byzantine fault 
-tolerance~\cite{pbft:osdi99, zyzzyva:sosp07}) 
-and record-replay~\cite{scribe:sigmetrics10, racepro:sosp11, respec:asplos10} 
-because they also suffer from nondeterminism. Second, promising 
-results in \repframe~\cite{repframe:apsys15} have shown that \xxx's transparent 
-replication architecture can enable multiple types of program analysis tools 
-within one execution, making a server program enjoy benefits of multiple 
-analyses. Third, \xxx's determinism as well as its \timealgo technique alone 
-can be applied to mitigate timing channels~\cite{Askarov:ccs10, Zhang:ccs11, 
-Aviram:ccsw10}. Moreover, our systems, techniques, and tools developed 
-for \xxx has broad applications on improving software reliability, 
-including bypassing concurrency bugs~\cite{wu:loom:osdi10}, detecting security 
-rule violations~\cite{woodpecker:asplos13}, and improving precision of static 
-analysis~\cite{wu:pldi12}. 
+
 
 % P11: Contributions, conceptual and engineering.
 % Our key conceptual contribution is the idea of transparent \smr for
