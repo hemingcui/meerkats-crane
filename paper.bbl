@@ -1,0 +1,287 @@
+\begin{thebibliography}{10}
+
+\bibitem{lxc}
+{LXC}.
+\newblock \url{https://linuxcontainers.org/}.
+
+\bibitem{mysql}
+{MySQL}.
+\newblock \url{http://www.mysql.com/}.
+
+\bibitem{mysql:replication}
+{MySQL Replication}.
+\newblock \url{https://dev.mysql.com/doc/refman/5.0/en/replication.html}.
+
+\bibitem{sqlite}
+{SQLite}.
+\newblock \url{https://www.sqlite.org/}.
+
+\bibitem{zookeeper}
+{ZooKeeper}.
+\newblock \url{https://zookeeper.apache.org/}.
+
+\bibitem{sysbench}
+{SysBench: a system performance benchmark}.
+\newblock \url{http://sysbench.sourceforge.net}, 2004.
+
+\bibitem{mediatomb}
+{MediaTomb - Free UPnP MediaServer}.
+\newblock \url{http://mediatomb.cc/}, 2014.
+
+\bibitem{apache}
+Apache web server.
+\newblock \url{http://www.apache.org}, 2012.
+
+\bibitem{Askarov:ccs10}
+A.~Askarov, D.~Zhang, and A.~C. Myers.
+\newblock Predictive black-box mitigation of timing channels.
+\newblock In {\em Proceedings of the 17th ACM conference on Computer and
+  communications security (CCS '10)}, Oct. 2010.
+
+\bibitem{Aviram:ccsw10}
+A.~Aviram, S.~Hu, B.~Ford, and R.~Gummadi.
+\newblock Determinating timing channels in compute clouds.
+\newblock In {\em Proceedings of the 2010 ACM Workshop on Cloud Computing
+  Security Workshop (CCSW '10)}, Oct. 2010.
+
+\bibitem{coredet:asplos10}
+T.~Bergan, O.~Anderson, J.~Devietti, L.~Ceze, and D.~Grossman.
+\newblock {CoreDet}: a compiler and runtime system for deterministic
+  multithreaded execution.
+\newblock In {\em Fifteenth International Conference on Architecture Support
+  for Programming Languages and Operating Systems (ASPLOS '10)}, pages 53--64,
+  Mar. 2010.
+
+\bibitem{ics:oopsla13}
+T.~Bergan, L.~Ceze, and D.~Grossman.
+\newblock Input-covering schedules for multithreaded programs.
+\newblock In {\em Proceedings of the 2013 ACM SIGPLAN international conference
+  on Object oriented programming systems languages \& applications}, pages
+  677--692. ACM, 2013.
+
+\bibitem{dos:osdi10}
+T.~Bergan, N.~Hunt, L.~Ceze, and S.~D. Gribble.
+\newblock Deterministic process groups in {dOS}.
+\newblock In {\em Proceedings of the Ninth Symposium on Operating Systems
+  Design and Implementation (OSDI '10)}, Oct. 2010.
+
+\bibitem{dpj:oopsla09}
+R.~L. Bocchino, Jr., V.~S. Adve, D.~Dig, S.~V. Adve, S.~Heumann,
+  R.~Komuravelli, J.~Overbey, P.~Simmons, H.~Sung, and M.~Vakilian.
+\newblock A type and effect system for deterministic parallel java.
+\newblock In {\em Conference on Object-Oriented Programming Systems, Languages,
+  and Applications (OOPSLA '09)}, pages 97--116, Oct. 2009.
+
+\bibitem{bolosky:nsdi11}
+W.~J. Bolosky, D.~Bradshaw, R.~B. Haagens, N.~P. Kusters, and P.~Li.
+\newblock Paxos replicated state machines as the basis of a high-performance
+  data store.
+\newblock In {\em Proceedings of the 8th USENIX Conference on Networked Systems
+  Design and Implementation}, NSDI'11, Berkeley, CA, USA, 2011. USENIX
+  Association.
+
+\bibitem{chubby:osdi}
+M.~Burrows.
+\newblock The chubby lock service for loosely-coupled distributed systems.
+\newblock In {\em Proceedings of the Seventh Symposium on Operating Systems
+  Design and Implementation (OSDI '06)}, pages 335--350, 2006.
+
+\bibitem{pbft:osdi99}
+M.~Castro and B.~Liskov.
+\newblock Practical byzantine fault tolerance.
+\newblock In {\em Proceedings of the Third Symposium on Operating Systems
+  Design and Implementation (OSDI '99)}, Oct. 1999.
+
+\bibitem{paxos:live}
+T.~D. Chandra, R.~Griesemer, and J.~Redstone.
+\newblock Paxos made live: An engineering perspective.
+\newblock In {\em Proceedings of the Twenty-sixth Annual ACM Symposium on
+  Principles of Distributed Computing (PODC '07)}, Aug. 2007.
+
+\bibitem{clamav}
+\url{http://www.clamav.net/}.
+
+\bibitem{criu}
+Criu.
+\newblock \url{http://criu.org}, 2015.
+
+\bibitem{repframe:apsys15}
+H.~Cui, R.~Gu, C.~Liu, and J.~Yang.
+\newblock Repframe: An efficient and transparent framework for dynamic program
+  analysis.
+\newblock In {\em Proceedings of 6th Asia-Pacific Workshop on Systems (APSys
+  '15)}, July 2015.
+
+\bibitem{woodpecker:asplos13}
+H.~Cui, G.~Hu, J.~Wu, and J.~Yang.
+\newblock Verifying systems rules using rule-directed symbolic execution.
+\newblock In {\em Eighteenth International Conference on Architecture Support
+  for Programming Languages and Operating Systems (ASPLOS '13)}, 2013.
+
+\bibitem{parrot:sosp13}
+H.~Cui, J.~Simsa, Y.-H. Lin, H.~Li, B.~Blum, X.~Xu, J.~Yang, G.~A. Gibson, and
+  R.~E. Bryant.
+\newblock Parrot: a practical runtime for deterministic, stable, and reliable
+  threads.
+\newblock In {\em Proceedings of the 24th ACM Symposium on Operating Systems
+  Principles (SOSP '13)}, Nov. 2013.
+
+\bibitem{peregrine:sosp11}
+H.~Cui, J.~Wu, J.~Gallagher, H.~Guo, and J.~Yang.
+\newblock Efficient deterministic multithreading through schedule relaxation.
+\newblock In {\em Proceedings of the 23rd ACM Symposium on Operating Systems
+  Principles (SOSP '11)}, pages 337--351, Oct. 2011.
+
+\bibitem{cui:tern:osdi10}
+H.~Cui, J.~Wu, C.-C. Tsai, and J.~Yang.
+\newblock Stable deterministic multithreading through schedule memoization.
+\newblock In {\em Proceedings of the Ninth Symposium on Operating Systems
+  Design and Implementation (OSDI '10)}, Oct. 2010.
+
+\bibitem{dmp:asplos09}
+J.~Devietti, B.~Lucia, L.~Ceze, and M.~Oskin.
+\newblock {DMP}: deterministic shared memory multiprocessing.
+\newblock In {\em Fourteenth International Conference on Architecture Support
+  for Programming Languages and Operating Systems (ASPLOS '09)}, pages 85--96,
+  Mar. 2009.
+
+\bibitem{rex:eurosys14}
+Z.~Guo, C.~Hong, M.~Yang, D.~Zhou, L.~Zhou, and L.~Zhuang.
+\newblock Rex: Replication at the speed of multi-core.
+\newblock In {\em Proceedings of the 2014 ACM European Conference on Computer
+  Systems (EUROSYS '14)}, page~11. ACM, 2014.
+
+\bibitem{ddos:asplos13}
+N.~Hunt, T.~Bergan, , L.~Ceze, and S.~Gribble.
+\newblock {DDOS}: Taming nondeterminism in distributed systems.
+\newblock In {\em Eighteenth International Conference on Architecture Support
+  for Programming Languages and Operating Systems (ASPLOS '13)}, pages
+  499--508, 2013.
+
+\bibitem{eve:osdi12}
+M.~Kapritsos, Y.~Wang, V.~Quema, A.~Clement, L.~Alvisi, M.~Dahlin, et~al.
+\newblock All about eve: Execute-verify replication for multi-core servers.
+\newblock In {\em Proceedings of the Tenth Symposium on Operating Systems
+  Design and Implementation (OSDI '12)}, volume~12, pages 237--250, 2012.
+
+\bibitem{zyzzyva:sosp07}
+R.~Kotla, L.~Alvisi, M.~Dahlin, A.~Clement, and E.~Wong.
+\newblock Zyzzyva: Speculative byzantine fault tolerance.
+\newblock In {\em Proceedings of the 21st ACM Symposium on Operating Systems
+  Principles (SOSP '07)}, Oct. 2007.
+
+\bibitem{racepro:sosp11}
+O.~Laadan, N.~Viennot, C.~che Tsai, C.~Blinn, J.~Yang, and J.~Nieh.
+\newblock Pervasive detection of process races in deployed systems.
+\newblock In {\em Proceedings of the 23rd ACM Symposium on Operating Systems
+  Principles (SOSP '11)}, Oct. 2011.
+
+\bibitem{scribe:sigmetrics2010}
+O.~Laadan, N.~Viennot, and J.~Nieh.
+\newblock Transparent, lightweight application execution replay on commodity
+  multiprocessor operating systems.
+\newblock In {\em ACM SIGMETRICS Performance Evaluation Review}, volume~38,
+  pages 155--166, 2010.
+
+\bibitem{scribe:sigmetrics10}
+O.~Laadan, N.~Viennot, and J.~Nieh.
+\newblock Transparent, lightweight application execution replay on commodity
+  multiprocessor operating systems.
+\newblock In {\em Proceedings of the ACM SIGMETRICS Conference on Measurement
+  and Modeling of Computer Systems (SIGMETRICS '10)}, pages 155--166, June
+  2010.
+
+\bibitem{paxos:simple}
+L.~Lamport.
+\newblock Paxos made simple.
+\newblock
+  \url{http://research.microsoft.com/en-us/um/people/lamport/pubs/paxos-simple.pdf}.
+
+\bibitem{lamportclock}
+L.~Lamport.
+\newblock Time, clocks, and the ordering of events in a distributed system.
+\newblock {\em Comm. ACM}, 21(7):558--565, 1978.
+
+\bibitem{paxos}
+L.~Lamport.
+\newblock The part-time parliament.
+\newblock {\em ACM Trans. Comput. Syst.}, 16(2):133--169, 1998.
+
+\bibitem{respec:asplos10}
+D.~Lee, B.~Wester, K.~Veeraraghavan, S.~Narayanasamy, P.~M. Chen, and J.~Flinn.
+\newblock Respec: efficient online multiprocessor replayvia speculation and
+  external determinism.
+\newblock In {\em Fifteenth International Conference on Architecture Support
+  for Programming Languages and Operating Systems (ASPLOS '10)}, pages 77--90,
+  Mar. 2010.
+
+\bibitem{libevent}
+libevent.
+\newblock \url{libevent.org/}, 2015.
+
+\bibitem{dthreads:sosp11}
+T.~Liu, C.~Curtsinger, and E.~D. Berger.
+\newblock {DTHREADS}: efficient deterministic multithreading.
+\newblock In {\em Proceedings of the 23rd ACM Symposium on Operating Systems
+  Principles (SOSP '11)}, pages 327--336, Oct. 2011.
+
+\bibitem{mencius:osdi08}
+Y.~Mao, F.~P. Junqueira, and K.~Marzullo.
+\newblock Mencius: building efficient replicated state machines for wans.
+\newblock In {\em Proceedings of the 8th USENIX conference on Operating systems
+  design and implementation}, volume~8, pages 369--384, 2008.
+
+\bibitem{paxos:practical}
+D.~Mazieres.
+\newblock Paxos made practical.
+\newblock Technical report, Technical report, 2007. http://www. scs. stanford.
+  edu/dm/home/papers, 2007.
+
+\bibitem{mencoder}
+Mencoder.
+\newblock \url{https://www.mplayerhq.hu/}, 2015.
+
+\bibitem{mongoose}
+\url{https://code.google.com/p/mongoose/}.
+
+\bibitem{kendo:asplos09}
+M.~Olszewski, J.~Ansel, and S.~Amarasinghe.
+\newblock Kendo: efficient deterministic multithreading in software.
+\newblock In {\em Fourteenth International Conference on Architecture Support
+  for Programming Languages and Operating Systems (ASPLOS '09)}, pages 97--108,
+  Mar. 2009.
+
+\bibitem{paxos:datastore}
+J.~Rao, E.~J. Shekita, and S.~Tata.
+\newblock Using paxos to build a scalable, consistent, and highly available
+  datastore.
+\newblock {\em Proc. VLDB Endow.}, Jan. 2011.
+
+\bibitem{paxos:complex}
+R.~Van~Renesse and D.~Altinbuken.
+\newblock Paxos made moderately complex.
+\newblock {\em ACM Computing Surveys (CSUR)}, 47(3):42:1--42:36, 2015.
+
+\bibitem{vtune}
+\url{http://software.intel.com/en-us/intel-vtune-amplifier-xe/}.
+
+\bibitem{wu:loom:osdi10}
+J.~Wu, H.~Cui, and J.~Yang.
+\newblock Bypassing races in live applications with execution filters.
+\newblock In {\em Proceedings of the Ninth Symposium on Operating Systems
+  Design and Implementation (OSDI '10)}, Oct. 2010.
+
+\bibitem{wu:pldi12}
+J.~Wu, Y.~Tang, G.~Hu, H.~Cui, and J.~Yang.
+\newblock Sound and precise analysis of parallel programs through schedule
+  specialization.
+\newblock In {\em Proceedings of the ACM SIGPLAN 2012 Conference on Programming
+  Language Design and Implementation (PLDI '12)}, pages 205--216, June 2012.
+
+\bibitem{Zhang:ccs11}
+D.~Zhang, A.~Askarov, and A.~C. Myers.
+\newblock Predictive mitigation of timing channels in interactive systems.
+\newblock In {\em Proceedings of the 18th ACM conference on Computer and
+  communications security (CCS '11)}, Oct. 2011.
+
+\end{thebibliography}
