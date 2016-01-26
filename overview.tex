@@ -144,168 +144,168 @@ execution states independent to the server's process (\S\ref{sec:checkpoint}).
 
 %% Overall guarantee. But go high level.
 
-
-\subsection{Example} \label{sec:example}
-
-\begin{figure}[t]
-\centering
-\begin{minipage}{.5\textwidth}
-\lgrindfile{code/example.cpp.lineno}
-\end{minipage}
-\vspace{-.1in}
-\caption{{\em A server example based on \apache.}} \label{fig:example}
-\vspace{-.20in}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\begin{minipage}{.5\textwidth}
-\lgrindfile{code/client.cpp.lineno}
-\end{minipage}
-\vspace{-.1in}
-\caption{{\em A client example based on \v{curl}.}} \label{fig:client}
-\vspace{-.05in}
-\end{figure}
-
-%TBD. Overall intro on the code.
-Figure~\ref{fig:example} shows an example based on the \apache \http server. For 
-clarity, the example uses worklist synchronization, and the actual servers use 
-\pthread mutex locks and conditional variables which \xxx readily handles. The 
-main thread creates a listener thread to accept client requests and a number 
-of worker threads to process client requests in parallel. The listener listens 
-on a port with \poll. When a new client connection comes, the 
-listener calls \accept and appends the accepted socket descriptor to a 
-worklist. Each worker thread blocks on a \v{worklist.get()} function until 
-the worklist is not empty. It then dequeues an accepted socket, processes the 
-request with a mutex lock acquired, and then sends a response. 
-Figure~\ref{fig:client} shows an example based on client programs such as 
-\v{curl}. This client connects to the server, sends one \http request, waits for 
-the server's response, and then closes the connection.
-
-Let's say a \xxx system with three replicas is set up, and each replica runs 
-this server; two clients start simultaneously, and each sends a \http PUT 
-and GET request respectively on the same URL ``a.php" to the primary.
-
-
-
-\begin{figure}[t]
-\centering
-\begin{minipage}{.5\textwidth}
-\lgrindfile{code/diff-sync-order.cpp}
-\end{minipage}
-\vspace{-.1in}
-\caption{{\em HTTP GET request got the valid page due to the two requests' 
-large arrival interval.}} \label{fig:yes-page}
-\vspace{-.2in}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\begin{minipage}{.5\textwidth}
-\lgrindfile{code/diff2-sync-order.cpp}
-\end{minipage}
-\vspace{-.1in}
-\caption{{\em HTTP GET request didn't get the page due to the two requests'
-small arrival interval.}} \label{fig:no-page}
-\vspace{-.05in}
-\end{figure}
-
-
-% If for example
-% there are multiple such clients sending POST requests simultaneously, the
-% order in which the requests are processed can lead to different server
-% states.
-
-This server has three major sources of nondeterminism, 
-which can easily cause its execution states across 
-replicas to diverge. The first source (for short, $S_1$) is that clients' 
-requests may arrive at different replicas in different orders. Second ($S_2$), 
-within the server, the nondeterministic \pthread synchronizations may easily 
-lead to different schedules. For instance, the \v{worklist.add()} called by 
-the listener may wake up any worker blocking on \v{worklist.get()}.
-
-Third ($S_3$), even if clients' requests arrive at different replicas in the 
-same order, the physical time interval of each two consecutive requests can 
-still be largely different across replicas depending on each request's physical 
-arrival time. This variance may cause client socket calls to be 
-admitted at inconsistent logical clocks across replica and lead to divergent 
-execution states.
-
-For instance, Figure~\ref{fig:yes-page} and Figure~\ref{fig:no-page} show two 
-replicas' schedules, and each is a total order of executed socket calls or 
-\pthread synchronizations in workers. Although the PUT and 
-GET requests arrive at the two replicas in the same order, these requests' 
-interval in the first schedule (Figure~\ref{fig:yes-page}) is much larger than 
-that in the second one, causing the first one to return a page and the second 
-one ``404 Not Found".
-
-% even one 
-% can always enforce that the PUT request arrives before the GET request, because 
-% worker 2's \recv call in Figure~\ref{fig:yes-page} returns much later than that 
-% in Figure~\ref{fig:no-page} (the line numbers in these figures can be viewed as 
-% logical times), two different schedules and thus different outputs may show up.
-
-% Worse, 
-% the workers' \v{process\_req()} functions contain extra \pthread 
-% synchronizations, then the server's blocking socket operations can return at 
-% arbitrary logical points which interleave nondeterministically with these 
-% synchronizations, easily leading to different schedules and execution states 
-% across machines.
-
-\begin{figure}[t]
-\centering
-\lgrindfile{code/paxos-queue-order.cpp}
-\vspace{-.2in}
-\caption{{\em A sequence of client socket calls enforced by 
-\xxx.}}\label{fig:paxos-queue}
-\vspace{-.25in}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\lgrindfile{code/example-sync-order.cpp}
-\vspace{-.2in}
-\caption{{\em A schedule of the server example enforced by 
-\xxx across replicas.}}\label{fig:dmt-schedule}
-\vspace{-.05in}
-\end{figure}
-
-
-\xxx works as follows. First, depending on the order the primary's proxy 
-receives these requests, \xxx eliminates $S_1$ with \paxos and ensures the 
-same request sequence for all replicas. Second, \xxx's \dmt 
-scheduler eliminates $S_2$ by ensuring a deterministic order of \pthread 
-synchronizations.
-
-Third, depending on the time intervals of client socket calls 
-observed by the primary, \xxx eliminates $S_3$ by dividing this sequence of 
-calls into bursts with time bubbles. Figure~\ref{fig:paxos-queue} shows a 
-sequence. Let's say the primary observes that the 
-intervals of the \connect and \send calls are all smaller than \ntimeout, and 
-the interval between the \send at Line 4 and the \close at Line 6 in the 
-sequence is larger than \ntimeout. Then, \xxx inserts a time bubble at Line 5 
-and divides the sequence into two bursts. For the calls in the first burst, all 
-replicas admit them as is using \dmt even if some of their time intervals are 
-larger than \ntimeout on some backups, consistently maintaining the logical 
-admission times for these calls.
-
-For the time bubble in this sequence, all replicas' \dmt schedulers promise to 
-do only \nclock \pthread synchronizations and then admit a client 
-socket call, consistently maintaining the logical admission times 
-for the \close calls. Given this sequence, Figure~\ref{fig:dmt-schedule} shows 
-\xxx's consistent schedule and output ``404 Not Found" across replicas. 
-We ran \xxx with \apache and used \v{curl} to spawn concurrent PUT 
-and GET requests, and we observed that \apache's network outputs were 
-consistent across replicas (\S\ref{sec:correctness}).
-
-In addition to enforcing consistency, the \timealgo technique is 
-also efficient because it does per-burst consensus instead of per-request 
-consensus. In this example, if more \connect calls arrive simultaneously and 
-each client connection does more \send calls, the ratio of inserted 
-time bubbles versus the total number of socket calls in the sequence may be 
-even lower, then \xxx may become more efficient. Evaluation on popular servers 
-and workloads shows that this ratio is often low and that \xxx has moderate 
-overhead  (\S\ref{sec:overhead}).
+% 
+% \subsection{Example} \label{sec:example}
+% 
+% \begin{figure}[t]
+% \centering
+% \begin{minipage}{.5\textwidth}
+% \lgrindfile{code/example.cpp.lineno}
+% \end{minipage}
+% \vspace{-.1in}
+% \caption{{\em A server example based on \apache.}} \label{fig:example}
+% \vspace{-.20in}
+% \end{figure}
+% 
+% \begin{figure}[t]
+% \centering
+% \begin{minipage}{.5\textwidth}
+% \lgrindfile{code/client.cpp.lineno}
+% \end{minipage}
+% \vspace{-.1in}
+% \caption{{\em A client example based on \v{curl}.}} \label{fig:client}
+% \vspace{-.05in}
+% \end{figure}
+% 
+% %TBD. Overall intro on the code.
+% Figure~\ref{fig:example} shows an example based on the \apache \http server. For 
+% clarity, the example uses worklist synchronization, and the actual servers use 
+% \pthread mutex locks and conditional variables which \xxx readily handles. The 
+% main thread creates a listener thread to accept client requests and a number 
+% of worker threads to process client requests in parallel. The listener listens 
+% on a port with \poll. When a new client connection comes, the 
+% listener calls \accept and appends the accepted socket descriptor to a 
+% worklist. Each worker thread blocks on a \v{worklist.get()} function until 
+% the worklist is not empty. It then dequeues an accepted socket, processes the 
+% request with a mutex lock acquired, and then sends a response. 
+% Figure~\ref{fig:client} shows an example based on client programs such as 
+% \v{curl}. This client connects to the server, sends one \http request, waits for 
+% the server's response, and then closes the connection.
+% 
+% Let's say a \xxx system with three replicas is set up, and each replica runs 
+% this server; two clients start simultaneously, and each sends a \http PUT 
+% and GET request respectively on the same URL ``a.php" to the primary.
+% 
+% 
+% 
+% \begin{figure}[t]
+% \centering
+% \begin{minipage}{.5\textwidth}
+% \lgrindfile{code/diff-sync-order.cpp}
+% \end{minipage}
+% \vspace{-.1in}
+% \caption{{\em HTTP GET request got the valid page due to the two requests' 
+% large arrival interval.}} \label{fig:yes-page}
+% \vspace{-.2in}
+% \end{figure}
+% 
+% \begin{figure}[t]
+% \centering
+% \begin{minipage}{.5\textwidth}
+% \lgrindfile{code/diff2-sync-order.cpp}
+% \end{minipage}
+% \vspace{-.1in}
+% \caption{{\em HTTP GET request didn't get the page due to the two requests'
+% small arrival interval.}} \label{fig:no-page}
+% \vspace{-.05in}
+% \end{figure}
+% 
+% 
+% % If for example
+% % there are multiple such clients sending POST requests simultaneously, the
+% % order in which the requests are processed can lead to different server
+% % states.
+% 
+% This server has three major sources of nondeterminism, 
+% which can easily cause its execution states across 
+% replicas to diverge. The first source (for short, $S_1$) is that clients' 
+% requests may arrive at different replicas in different orders. Second ($S_2$), 
+% within the server, the nondeterministic \pthread synchronizations may easily 
+% lead to different schedules. For instance, the \v{worklist.add()} called by 
+% the listener may wake up any worker blocking on \v{worklist.get()}.
+% 
+% Third ($S_3$), even if clients' requests arrive at different replicas in the 
+% same order, the physical time interval of each two consecutive requests can 
+% still be largely different across replicas depending on each request's physical 
+% arrival time. This variance may cause client socket calls to be 
+% admitted at inconsistent logical clocks across replica and lead to divergent 
+% execution states.
+% 
+% For instance, Figure~\ref{fig:yes-page} and Figure~\ref{fig:no-page} show two 
+% replicas' schedules, and each is a total order of executed socket calls or 
+% \pthread synchronizations in workers. Although the PUT and 
+% GET requests arrive at the two replicas in the same order, these requests' 
+% interval in the first schedule (Figure~\ref{fig:yes-page}) is much larger than 
+% that in the second one, causing the first one to return a page and the second 
+% one ``404 Not Found".
+% 
+% % even one 
+% % can always enforce that the PUT request arrives before the GET request, because 
+% % worker 2's \recv call in Figure~\ref{fig:yes-page} returns much later than that 
+% % in Figure~\ref{fig:no-page} (the line numbers in these figures can be viewed as 
+% % logical times), two different schedules and thus different outputs may show up.
+% 
+% % Worse, 
+% % the workers' \v{process\_req()} functions contain extra \pthread 
+% % synchronizations, then the server's blocking socket operations can return at 
+% % arbitrary logical points which interleave nondeterministically with these 
+% % synchronizations, easily leading to different schedules and execution states 
+% % across machines.
+% 
+% \begin{figure}[t]
+% \centering
+% \lgrindfile{code/paxos-queue-order.cpp}
+% \vspace{-.2in}
+% \caption{{\em A sequence of client socket calls enforced by 
+% \xxx.}}\label{fig:paxos-queue}
+% \vspace{-.25in}
+% \end{figure}
+% 
+% \begin{figure}[t]
+% \centering
+% \lgrindfile{code/example-sync-order.cpp}
+% \vspace{-.2in}
+% \caption{{\em A schedule of the server example enforced by 
+% \xxx across replicas.}}\label{fig:dmt-schedule}
+% \vspace{-.05in}
+% \end{figure}
+% 
+% 
+% \xxx works as follows. First, depending on the order the primary's proxy 
+% receives these requests, \xxx eliminates $S_1$ with \paxos and ensures the 
+% same request sequence for all replicas. Second, \xxx's \dmt 
+% scheduler eliminates $S_2$ by ensuring a deterministic order of \pthread 
+% synchronizations.
+% 
+% Third, depending on the time intervals of client socket calls 
+% observed by the primary, \xxx eliminates $S_3$ by dividing this sequence of 
+% calls into bursts with time bubbles. Figure~\ref{fig:paxos-queue} shows a 
+% sequence. Let's say the primary observes that the 
+% intervals of the \connect and \send calls are all smaller than \ntimeout, and 
+% the interval between the \send at Line 4 and the \close at Line 6 in the 
+% sequence is larger than \ntimeout. Then, \xxx inserts a time bubble at Line 5 
+% and divides the sequence into two bursts. For the calls in the first burst, all 
+% replicas admit them as is using \dmt even if some of their time intervals are 
+% larger than \ntimeout on some backups, consistently maintaining the logical 
+% admission times for these calls.
+% 
+% For the time bubble in this sequence, all replicas' \dmt schedulers promise to 
+% do only \nclock \pthread synchronizations and then admit a client 
+% socket call, consistently maintaining the logical admission times 
+% for the \close calls. Given this sequence, Figure~\ref{fig:dmt-schedule} shows 
+% \xxx's consistent schedule and output ``404 Not Found" across replicas. 
+% We ran \xxx with \apache and used \v{curl} to spawn concurrent PUT 
+% and GET requests, and we observed that \apache's network outputs were 
+% consistent across replicas (\S\ref{sec:correctness}).
+% 
+% In addition to enforcing consistency, the \timealgo technique is 
+% also efficient because it does per-burst consensus instead of per-request 
+% consensus. In this example, if more \connect calls arrive simultaneously and 
+% each client connection does more \send calls, the ratio of inserted 
+% time bubbles versus the total number of socket calls in the sequence may be 
+% even lower, then \xxx may become more efficient. Evaluation on popular servers 
+% and workloads shows that this ratio is often low and that \xxx has moderate 
+% overhead  (\S\ref{sec:overhead}).
 
 % according to the primary's physical duration check on 
 % \ntimeout, \xxx eliminates $S_3$ by inserting time bubbles which divide the 
