@@ -9,13 +9,13 @@ Moreover, existing \smr systems provide narrow state machine interfaces to
 suit specific programs, and it can be quite strenuous and error-prone to
 orchestrate a general program into these interfaces
 
-This paper presents \xxx, an \smr system that transparently replicates
+We have built \xxx, an \smr system that transparently replicates
 general server programs. \xxx achieves distributed consensus on the socket
-API, a common interface to almost all server programs.  It leverages
-deterministic multithreading (specifically, our prior system \parrot) to
-make multithreaded replicas deterministic.  It uses a new technique we
-call \emph{time bubbling} to efficiently tackle a difficult challenge of
-nondeterministic network input timing. Evaluation on \nprog widely used
-server programs (\eg, \apache, \clamav, and \mysql) shows that \xxx is
-easy to use, has moderate overhead, and is robust. \xxx's source code is
-at \github.
+API, a common interface to almost all server programs.  It leverages \parrot,
+a deterministic multithreading system we built, to make multithreaded replicas 
+deterministic. It uses a new technique we call \emph{time bubbling} to 
+efficiently tackle a difficult challenge of nondeterministic network input 
+timing. Evaluation on \nprog widely used server programs (\eg, \apache, 
+\clamav, and \mysql) shows that \xxx is easy to use, has moderate overhead, and 
+is robust. \xxx has the potential to grealty improve the reliability and 
+availability of general programs. \xxx's source code is at \github.

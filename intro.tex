@@ -65,7 +65,7 @@ Chubby developers to add quota support.
 % abstraction: black-blox replication (BBRep). Key technique: DMT. Key 
 % guarantee: TBD.
 
-This paper presents \xxx,\footnote{\xxx stands for Correctly ReplicAting
+We present \xxx,\footnote{\xxx stands for Correctly ReplicAting
   Nondeterministic Executions. It is also our hope that our system is as
   elegant as the identically named bird.} an \smr system that
 transparently replicates server programs for high availability.  With
@@ -90,25 +90,27 @@ quorum of the replicas sees the same exact sequence of the incoming socket calls
 %% this design's elegance, we name our system after crane, one of the most elegant 
 %% birds.
 
-\xxx schedules synchronizations using \emph{deterministic multithreading 
-(\dmt)}~\cite{dpj:oopsla09,dmp:asplos09,kendo:asplos09,coredet:asplos10, 
-dos:osdi10,ddos:asplos13,ics:oopsla13}.  This technique typically maintains a 
-\emph{logical time}\footnote{Though related, the logical time in \dmt is not to 
+To address nondeterminism, we have built three \emph{deterministic 
+multithreading (\dmt)} systems~\cite{cui:tern:osdi10, peregrine:sosp11, 
+parrot:sosp13}. \dmt~\cite{dpj:oopsla09,dmp:asplos09,kendo:asplos09,
+coredet:asplos10, 
+dos:osdi10,ddos:asplos13,ics:oopsla13} typically maintains a \emph{logical 
+time}\footnote{Though related, the logical time in \dmt is not to 
 be confused with the logical time in distributed systems~\cite{lamportclock}.} 
 that advances deterministically on each thread's synchronization. By 
 serializing thread synchronizations, \dmt practically makes an entire 
 multithreaded execution deterministic. The overhead of \dmt is typically 
 moderate because most code is not synchronization and can still run in parallel. 
-Specifically, \xxx leverages our prior \dmt system
-\parrot~\cite{parrot:sosp13}, which incurs on average 12.7\% overhead
-on a wide range of 108 popular multithreaded programs on 24-core machines.
+Specifically, \xxx leverages \parrot~\cite{parrot:sosp13}, our latest \dmt 
+system. \parrot incurs merely 12.7\% overhead in 
+average on a wide range of 108 popular multithreaded programs on 24-core 
+machines.
 
 A key challenge on realizing \smr for multithreaded executions is that,
 simply combining \paxos and \dmt is not sufficient to keep replicas in
 sync, because the physical time that each request arrives at different
 replicas may still be different, easily leading to divergence of execution
-states and outputs.  (We illustrate this problem using an example in
-\S\ref{sec:example} and experimental results in \S\ref{sec:correctness}.)
+states and outputs.
 
 %% For instance, consider multiple server threads blocking at \recv to 
 %% wait for \send socket calls issued from clients. Even if \paxos ensures the 
@@ -194,8 +196,7 @@ checkpoint and recovery must work with general programs. To this end, it
 leverages \criu~\cite{criu} to checkpoint and restore process states, and
 \lxc~\cite{lxc} for file system states.  An additional benefit of using
 the \lxc container is that \xxx isolates the replicated server program
-from the environment, avoiding nondeterministic systems resource contentions 
-(\S\ref{sec:checkpoint}).
+from the environment, avoiding nondeterministic systems resource contentions.
 
 % (\eg,
 % a random external process grabs the network port the replicated program
@@ -212,26 +213,10 @@ moderate (an average of \overhead overhead at the servers' peak
 performance setups on our 24-core machines); and that \xxx is robust on replica 
 failures.
 
-% P11: Contributions, conceptual and engineering.
-Our key conceptual contribution is the idea of transparent \smr for
-general programs, which has the potential to expand \smr's
-adoption and improve availability of many systems.  This idea also applies to 
-other replication concepts (\eg, byzantine fault 
-tolerance~\cite{pbft:osdi99,zyzzyva:sosp07}). This idea has other broad 
-applications as well (\S\ref{sec:app}). Our engineering contributions 
-include the \xxx system and its evaluation on widely used server
-programs. All \xxx's source code (including a standalone, libevent-based
-\paxos implementation), benchmarks, and evaluation results are available
-at \github.
-
-In the remainder of this paper, \S\ref{sec:overview} introduces \xxx's 
-architecture and an example. \S\ref{sec:wrappers} describes how \xxx enforces 
-order for synchronizations in a server. \S\ref{sec:time-bubble} illustrates the 
-work flow of the \timealgo technique. \S\ref{sec:impl} describes implementation 
-details. \S\ref{sec:discussion} discusses the limitations and 
-applications of \xxx. \S\ref{sec:eval} presents evaluation results. 
-\S\ref{sec:related} discusses related work, and \S\ref{sec:conclusion} 
-concludes.
+In the remainder of this report, \S\ref{sec:overview} introduces \xxx's 
+architecture. \S\ref{sec:eval} presents evaluation results. 
+\S\ref{sec:conclusion} concludes, and \S\ref{sec:recommendation} presents 
+recommendations.
 
 
 
